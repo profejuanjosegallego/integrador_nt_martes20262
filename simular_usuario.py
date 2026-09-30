@@ -92,3 +92,7 @@ def ensuciar(datos_df):
     datos_df["fecha_registro"]=iso
     filas_elegidas=generar_muestra(datos_df,0.4)
     datos_df.loc[filas_elegidas,"fecha_registro"]=latino.loc["filas_elegidas"]
+
+    #activo en ocaciones llega SI NO 1 o 0
+    filas_elegidas=generar_muestra(datos_df,0.3)
+    datos_df.loc[filas_elegidas,"activo"]=datos_df.loc[filas_elegidas,"activo"].map(convertir_booleano_texto)
