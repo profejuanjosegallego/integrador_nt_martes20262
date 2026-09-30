@@ -80,4 +80,15 @@ def ensuciar(datos_df):
     datos_df.loc[filas_elegidas,"correo"]=datos_df.loc[filas_elegidas,"correo"].str.replace("@","", regex=False)
 
     filas_elegidas=generar_muestra(datos_df,0.04)
-    datos_df.loc(filas_elegidas,"correo")=None
+    datos_df.loc[filas_elegidas,"correo"]=None
+
+    #rol variantes de escritura (admin ADMIN Admin)
+    filas_elegidas=generar_muestra(datos_df,0.07)
+    datos_df.loc[filas_elegidas,"rol"]=datos_df.loc[filas_elegidas,"rol"].map(escribir_mal)
+
+    #fecha dos formatos mezclados (2026-03-15 14:30:00 y 15/03/2026 14:30)
+    iso=datos_df["fecha_registro"].dt.strftime("%Y-%m-%d %H:%M:%S")
+    latino=datos_df["fecha_registro"].dt.strftime("%d/%m/%Y %H:%M")
+    datos_df["fecha_registro"]=iso
+    filas_elegidas=generar_muestra(datos_df,0.4)
+    datos_df.loc[filas_elegidas,"fecha_registro"]=latino.loc["filas_elegidas"]
