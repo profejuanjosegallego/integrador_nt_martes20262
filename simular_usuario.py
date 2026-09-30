@@ -1,5 +1,6 @@
 import random
 import uuid
+import pandas as pd
 from faker import Faker
 
 #1. configurar el faker a la region que necesito
@@ -31,12 +32,17 @@ def generar_datos_limpios(numero_datos=FILAS):
     for _ in range(numero_datos):
         
         filas.append({
-            "id",
-            "nombre",
-            "correo",
-            "contrasena_hash",
-            "rol",
-            "activo",
-            "fecha_registro"
+            "id":str(uuid.uuid4()),
+            "nombre":fake.name(),
+            "correo":fake.email(),
+            "contrasena_hash":fake.sha256(),
+            "rol":random.choice(ROLES),
+            "activo":random.choice([True,False]),
+            "fecha_registro":fake.date_time_between(start_date="-2y", end_date="now")
 
         })
+    return filas
+
+variable_noche=pd.DataFrame(generar_datos_limpios())
+
+#Ensuciar los datos
