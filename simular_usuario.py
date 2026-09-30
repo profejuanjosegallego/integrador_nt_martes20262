@@ -46,3 +46,38 @@ def generar_datos_limpios(numero_datos=FILAS):
 variable_noche=pd.DataFrame(generar_datos_limpios())
 
 #Ensuciar los datos
+
+#1. Crear una funcion para definir procentajes de error
+def generar_muestra(datos,porcentaje):
+    return datos.sample(fraccion=porcentaje, random_state=random.randint(0,999)).index
+
+#2. Crear una funcion para escribir mal un texto
+def escribir_mal(texto):
+    variantes=[texto.lower(),f" {texto.title()} ", texto.capitalize()]
+    return random.choice(variantes)
+
+#3. Convertir boolenos en textos
+def convertir_booleano_texto(valor):
+    if valor:
+        return random.choice(["SI", "1"])
+    return random.choice(["NO", "0"])
+
+#4. Funcion para ensuciar los datos
+def ensuciar(datos_df):
+    datos_df=datos_df.copy()
+    #nombre: 10% con espacios sobrantes, 8% Mayuscula
+    filas_elegidas=generar_muestra(datos_df,0.10)
+    datos_df.loc[filas_elegidas,"nombre"]=" "+datos_df.loc[filas_elegidas,"nombre"]+" "
+
+    filas_elegidas=generar_muestra(datos_df,0.08)
+    datos_df.loc[filas_elegidas,"nombre"]=datos_df.loc[filas_elegidas,"nombre"].str.upper()
+
+    #correo: 12% Mayusculas 5% sin el arroba 4% en None
+    filas_elegidas=generar_muestra(datos_df,0.12)
+    datos_df.loc[filas_elegidas,"correo"]=datos_df.loc[filas_elegidas,"correo"].str.upper()
+
+    filas_elegidas=generar_muestra(datos_df,0.05)
+    datos_df.loc[filas_elegidas,"correo"]=datos_df.loc[filas_elegidas,"correo"].str.replace("@","", regex=False)
+
+    filas_elegidas=generar_muestra(datos_df,0.04)
+    datos_df.loc(filas_elegidas,"correo")=None
