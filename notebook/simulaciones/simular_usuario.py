@@ -1,6 +1,5 @@
 import random
 import uuid
-import pandas as pd
 from faker import Faker
 
 #1. configurar el faker a la region que necesito
@@ -12,11 +11,11 @@ Faker.seed(42)
 random.seed(42)
 
 #3. Identifico los datos que debo simular
-#id (texto (UUID)) 
-#nombre (texto) 
-#correo (texto) 
-#contrasena_hash (texto) 
-#rol (texto) 
+#id (texto (UUID))
+#nombre (texto)
+#correo (texto)
+#contrasena_hash (texto)
+#rol (texto)
 #activo (booleano),
 #fecha_registro (fecha y hora)
 
@@ -30,7 +29,7 @@ FILAS=400
 def generar_datos_limpios(numero_datos=FILAS):
     filas=[]
     for _ in range(numero_datos):
-        
+
         filas.append({
             "id":str(uuid.uuid4()),
             "nombre":fake.name(),
@@ -43,13 +42,12 @@ def generar_datos_limpios(numero_datos=FILAS):
         })
     return filas
 
-variable_noche=pd.DataFrame(generar_datos_limpios())
-
 #Ensuciar los datos
 
 #1. Crear una funcion para definir procentajes de error
 def generar_muestra(datos,porcentaje):
-    return datos.sample(fraccion=porcentaje, random_state=random.randint(0,999)).index
+    #frac es el porcentaje de filas que se toman al azar
+    return datos.sample(frac=porcentaje, random_state=random.randint(0,999)).index
 
 #2. Crear una funcion para escribir mal un texto
 def escribir_mal(texto):
@@ -91,8 +89,13 @@ def ensuciar(datos_df):
     latino=datos_df["fecha_registro"].dt.strftime("%d/%m/%Y %H:%M")
     datos_df["fecha_registro"]=iso
     filas_elegidas=generar_muestra(datos_df,0.4)
-    datos_df.loc[filas_elegidas,"fecha_registro"]=latino.loc["filas_elegidas"]
+    datos_df.loc[filas_elegidas,"fecha_registro"]=latino.loc[filas_elegidas]
 
     #activo en ocaciones llega SI NO 1 o 0
+    #primero la columna pasa a tipo object para que acepte textos y booleanos
+    datos_df["activo"]=datos_df["activo"].astype(object)
     filas_elegidas=generar_muestra(datos_df,0.3)
     datos_df.loc[filas_elegidas,"activo"]=datos_df.loc[filas_elegidas,"activo"].map(convertir_booleano_texto)
+
+    #devuelvo la tabla ya sucia
+    return datos_df
